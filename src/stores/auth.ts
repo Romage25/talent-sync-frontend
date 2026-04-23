@@ -20,12 +20,14 @@ export const useAuthStore = defineStore('auth', {
       try {
         const res = await api.post('/login', form)
 
+        const { user, token } = res.data.data;
+
         // adjust depending on your backend response
-        this.user = res.data.user
-        this.token = res.data.token
+        this.user = user;
+        this.token = token;
 
         // persist token
-        localStorage.setItem('token', this.token ?? '')
+        localStorage.setItem('token', token);
       } catch (err) {
         this.errors = handleLaravelError(err)
       } finally {
@@ -38,14 +40,16 @@ export const useAuthStore = defineStore('auth', {
       this.errors = {}
 
       try {
-        const res = await api.post('/register', form)
+        const res = await api.post('/register', form);
+
+         const { user, token } = res.data.data;
 
         // adjust depending on your backend response
-        this.user = res.data.user
-        this.token = res.data.token
+        this.user = user;
+        this.token = token;
 
         // persist token
-        localStorage.setItem('token', this.token ?? '')
+        localStorage.setItem('token', token);
       } catch (err) {
         this.errors = handleLaravelError(err)
       } finally {

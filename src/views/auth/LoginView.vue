@@ -16,7 +16,7 @@ const login = async () => {
   await auth.login(form)
 
   // redirect if no errors
-  if (Object.keys(auth.errors).length === 0) {
+  if (Object.keys(auth.errors).length === 0 && auth.user) {
     router.push('/')
   }
 }

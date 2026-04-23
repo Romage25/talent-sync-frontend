@@ -22,7 +22,7 @@ const register = async () => {
   await auth.register(form)
 
   // redirect if no errors
-  if (Object.keys(auth.errors).length === 0) {
+  if (Object.keys(auth.errors).length === 0 && auth.user) {
     router.push('/')
   }
 }
