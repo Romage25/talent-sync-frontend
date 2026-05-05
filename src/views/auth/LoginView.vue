@@ -15,6 +15,9 @@ const form = reactive<LoginForm>({
 const login = async () => {
   await auth.login(form)
 
+  form.email = '';
+  form.password = '';
+
   // redirect if no errors
   if (Object.keys(auth.errors).length === 0 && auth.user) {
     router.push('/')
