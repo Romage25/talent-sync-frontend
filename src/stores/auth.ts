@@ -20,14 +20,14 @@ export const useAuthStore = defineStore('auth', {
       try {
         const res = await api.post('/login', form)
 
-        const { user, token } = res.data.data;
+        const { user, token } = res.data.data
 
         // adjust depending on your backend response
-        this.user = user;
-        this.token = token;
+        this.user = user
+        this.token = token
 
         // persist token
-        localStorage.setItem('token', token);
+        localStorage.setItem('token', token)
       } catch (err) {
         this.errors = handleLaravelError(err)
       } finally {
@@ -40,16 +40,16 @@ export const useAuthStore = defineStore('auth', {
       this.errors = {}
 
       try {
-        const res = await api.post('/register', form);
+        const res = await api.post('/register', form)
 
-         const { user, token } = res.data.data;
+        const { user, token } = res.data.data
 
         // adjust depending on your backend response
-        this.user = user;
-        this.token = token;
+        this.user = user
+        this.token = token
 
         // persist token
-        localStorage.setItem('token', token);
+        localStorage.setItem('token', token)
       } catch (err) {
         this.errors = handleLaravelError(err)
       } finally {
@@ -68,6 +68,20 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       this.token = null
       localStorage.removeItem('token')
+    },
+
+    async fetchUser() {
+      try {
+        const res = await api.get('/user')
+
+        this.user = res.data.user
+      } catch (err) {
+        this.user = null
+        this.token = null
+        localStorage.removeItem('token')
+
+        console.error(err);
+      }
     },
   },
 })
