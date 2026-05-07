@@ -1,28 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import LoginView from '@/views/auth/LoginView.vue'
-import RegisterView from '@/views/auth/RegisterView.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
-      meta: { requiresAuth: true },
-    },
-   {
-      path: '/login',
-      name: 'login',
-      component: LoginView,
-      meta: { guestOnly: true },
+      component: DashboardLayout,
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/HomeView.vue'),
+        },
+        {
+          path: 'about',
+          component: () => import('@/views/AboutView.vue'),
+        },
+      ],
     },
     {
-      path: '/register',
-      name: 'register',
-      component: RegisterView,
-      meta: { guestOnly: true },
+      path: '/',
+      component: AuthLayout,
+      children: [
+        {
+          path: 'login',
+          component: () => import('@/views/auth/LoginView.vue'),
+        },
+        {
+          path: 'register',
+          component: () => import('@/views/auth/RegisterView.vue'),
+        },
+      ],
     },
   ],
 })
@@ -42,6 +51,5 @@ router.beforeEach((to) => {
 
   return true
 })
-
 
 export default router
