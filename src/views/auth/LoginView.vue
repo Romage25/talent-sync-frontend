@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import type { LoginForm } from '@/types/auth'
-import { reactive } from 'vue'
+
+import { reactive, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 const auth = useAuthStore()
 const router = useRouter()
+
+const loading = ref(false)
 
 const form = reactive<LoginForm>({
   email: '',
@@ -13,14 +16,22 @@ const form = reactive<LoginForm>({
 })
 
 const login = async () => {
-  await auth.login(form)
+  if (loading.value) return
 
-  form.email = '';
-  form.password = '';
+  loading.value = true
 
-  // redirect if no errors
-  if (Object.keys(auth.errors).length === 0 && auth.user) {
-    router.push('/')
+  try {
+    await auth.login(form)
+
+    // redirect if no errors
+    if (Object.keys(auth.errors).length === 0 && auth.user) {
+      router.push('/')
+    }
+  } finally {
+    form.email = ''
+    form.password = ''
+
+    loading.value = false
   }
 }
 </script>
@@ -53,6 +64,7 @@ const login = async () => {
             v-model="form.email"
             type="email"
             class="mt-2 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
 
           <p v-if="auth.errors.email" class="text-red-500">
@@ -63,13 +75,14 @@ const login = async () => {
         <!-- Password -->
         <div>
           <label class="block text-sm font-medium text-gray-900 dark:text-gray-100">
-            Password
+          Password
           </label>
 
           <input
             v-model="form.password"
             type="password"
             class="mt-2 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
 
           <p v-if="auth.errors.password" class="text-red-500">

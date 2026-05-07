@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import type { RegisterForm } from '@/types/auth'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 const auth = useAuthStore()
 const router = useRouter()
+
+const loading = ref(false)
 
 const form = reactive<RegisterForm>({
   first_name: '',
@@ -19,11 +21,28 @@ const form = reactive<RegisterForm>({
 })
 
 const register = async () => {
-  await auth.register(form)
+  if (loading.value) return
 
-  // redirect if no errors
-  if (Object.keys(auth.errors).length === 0 && auth.user) {
-    router.push('/')
+  loading.value = true
+
+  try {
+    await auth.register(form)
+
+    // redirect if no errors
+    if (Object.keys(auth.errors).length === 0 && auth.user) {
+      form.first_name = ''
+      form.last_name = ''
+      form.address = ''
+      form.phone_no = ''
+      form.role = ''
+      form.email = ''
+      form.password = ''
+      form.password_confirmation = ''
+
+      router.push('/')
+    }
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -57,6 +76,7 @@ const register = async () => {
             v-model="form.first_name"
             type="text"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
 
           <p v-if="auth.errors.first_name" class="text-red-500">
@@ -71,6 +91,7 @@ const register = async () => {
             v-model="form.last_name"
             type="text"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
 
           <p v-if="auth.errors.last_name" class="text-red-500">
@@ -85,6 +106,7 @@ const register = async () => {
             v-model="form.address"
             type="text"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
 
           <p v-if="auth.errors.address" class="text-red-500">
@@ -99,6 +121,7 @@ const register = async () => {
             v-model="form.phone_no"
             type="text"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
 
           <p v-if="auth.errors.phone_no" class="text-red-500">
@@ -112,6 +135,7 @@ const register = async () => {
           <select
             v-model="form.role"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           >
             <option value="">--Select--</option>
             <option value="applicant">Applicant</option>
@@ -130,6 +154,7 @@ const register = async () => {
             v-model="form.email"
             type="email"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
 
           <p v-if="auth.errors.email" class="text-red-500">
@@ -144,6 +169,7 @@ const register = async () => {
             v-model="form.password"
             type="password"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
 
           <p v-if="auth.errors.password" class="text-red-500">
@@ -160,6 +186,7 @@ const register = async () => {
             v-model="form.password_confirmation"
             type="password"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
+            :disabled="loading"
           />
         </div>
 
