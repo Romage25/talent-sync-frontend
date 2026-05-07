@@ -157,7 +157,7 @@ const logout = async () => {
             R
           </div>
 
-          <span class="hidden text-sm font-medium text-gray-700 md:block"> Rodel </span>
+          <span class="hidden text-sm font-medium text-gray-700 md:block"> {{ auth.user?.first_name }} </span>
         </button>
 
         <transition
