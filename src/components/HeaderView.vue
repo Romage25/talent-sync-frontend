@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router'
 const auth = useAuthStore()
 const router = useRouter()
 
+const emit = defineEmits(['toggleSidebar'])
+
 const loggingOut = ref(false)
 
 /* USER MENU */
@@ -57,6 +59,10 @@ const logout = async () => {
     loggingOut.value = false
   }
 }
+
+const handleToggle = () => {
+  emit('toggleSidebar')
+}
 </script>
 
 <template>
@@ -79,7 +85,7 @@ const logout = async () => {
     class="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6 shadow-sm"
   >
     <!-- Left -->
-    <button class="md:hidden rounded-lg p-2 hover:bg-gray-100" @click="$emit('toggle-sidebar')">
+    <button class="md:hidden rounded-lg p-2 hover:bg-gray-100" @click="handleToggle">
       ☰
     </button>
 
@@ -157,7 +163,9 @@ const logout = async () => {
             R
           </div>
 
-          <span class="hidden text-sm font-medium text-gray-700 md:block"> {{ auth.user?.first_name }} </span>
+          <span class="hidden text-sm font-medium text-gray-700 md:block">
+            {{ auth.user?.first_name }}
+          </span>
         </button>
 
         <transition
