@@ -10,7 +10,6 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-
 interface ChildItem {
   name: string
   path: string
@@ -70,7 +69,7 @@ const toggleMenu = (index: number) => {
     ]"
   >
     <!-- Header -->
-    <div class="flex items-center justify-between border-b p-4">
+    <div class="flex h-16 items-center justify-between border-b px-4">
       <div v-if="sidebarOpen">
         <h1 class="text-lg font-semibold">Admin Panel</h1>
         <p class="text-xs text-gray-500">Management System</p>
@@ -78,14 +77,14 @@ const toggleMenu = (index: number) => {
 
       <!-- Desktop toggle -->
       <button
-        class="hidden md:block rounded-lg p-2 hover:bg-gray-100"
+        class="hidden rounded-lg p-2 hover:bg-gray-100 md:block"
         @click="sidebarOpen = !sidebarOpen"
       >
         ☰
       </button>
 
       <!-- Mobile close -->
-      <button class="md:hidden rounded-lg p-2 hover:bg-gray-100" @click="emit('close')">✕</button>
+      <button class="rounded-lg p-2 hover:bg-gray-100 md:hidden" @click="emit('close')">✕</button>
     </div>
 
     <!-- Navigation -->
