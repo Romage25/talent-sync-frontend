@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import type { RegisterForm } from '@/types/auth'
-import { reactive, ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 const auth = useAuthStore()
+const route = useRoute()
 const router = useRouter()
 
 const loading = ref(false)
+const googleLoading = ref(false)
+
+const isDisabled = computed(() => loading.value || googleLoading.value)
 
 const form = reactive<RegisterForm>({
   first_name: '',
@@ -21,7 +25,7 @@ const form = reactive<RegisterForm>({
 })
 
 const register = async () => {
-  if (loading.value) return
+  if (loading.value || googleLoading.value) return
 
   loading.value = true
 
@@ -45,6 +49,22 @@ const register = async () => {
     loading.value = false
   }
 }
+
+const loginWithGoogle = () => {
+  if (googleLoading.value || loading.value) return
+
+  googleLoading.value = true
+
+  setTimeout(() => {
+    window.location.href = 'http://localhost:8000/auth/google/redirect?mode=register'
+  }, 500)
+}
+
+onMounted(() => {
+  if (route.query.error) {
+    auth.errors.general = [String(route.query.error)]
+  }
+})
 </script>
 
 <template>
@@ -76,7 +96,7 @@ const register = async () => {
             v-model="form.first_name"
             type="text"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
-            :disabled="loading"
+            :disabled="isDisabled"
           />
 
           <p v-if="auth.errors.first_name" class="text-red-500">
@@ -91,7 +111,7 @@ const register = async () => {
             v-model="form.last_name"
             type="text"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
-            :disabled="loading"
+            :disabled="isDisabled"
           />
 
           <p v-if="auth.errors.last_name" class="text-red-500">
@@ -106,7 +126,7 @@ const register = async () => {
             v-model="form.address"
             type="text"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
-            :disabled="loading"
+            :disabled="isDisabled"
           />
 
           <p v-if="auth.errors.address" class="text-red-500">
@@ -121,7 +141,7 @@ const register = async () => {
             v-model="form.phone_no"
             type="text"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
-            :disabled="loading"
+            :disabled="isDisabled"
           />
 
           <p v-if="auth.errors.phone_no" class="text-red-500">
@@ -135,7 +155,7 @@ const register = async () => {
           <select
             v-model="form.role"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
-            :disabled="loading"
+            :disabled="isDisabled"
           >
             <option value="">--Select--</option>
             <option value="applicant">Applicant</option>
@@ -154,7 +174,7 @@ const register = async () => {
             v-model="form.email"
             type="email"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
-            :disabled="loading"
+            :disabled="isDisabled"
           />
 
           <p v-if="auth.errors.email" class="text-red-500">
@@ -169,7 +189,7 @@ const register = async () => {
             v-model="form.password"
             type="password"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
-            :disabled="loading"
+            :disabled="isDisabled"
           />
 
           <p v-if="auth.errors.password" class="text-red-500">
@@ -186,18 +206,24 @@ const register = async () => {
             v-model="form.password_confirmation"
             type="password"
             class="mt-1 w-full rounded-md px-3 py-2 bg-white dark:bg-white/5 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10"
-            :disabled="loading"
+            :disabled="isDisabled"
           />
         </div>
 
         <!-- Button full width -->
         <div class="md:col-span-2">
           <button
-            :disabled="auth.loading"
+            :disabled="isDisabled"
             type="submit"
             class="w-full rounded-md bg-indigo-600 py-2 text-white font-semibold hover:bg-indigo-500 transition"
           >
-            {{ auth.loading ? 'Creating account...' : 'Create account' }}
+            {{
+              googleLoading
+                ? 'Google authentication...'
+                : auth.loading
+                  ? 'Creating account...'
+                  : 'Create account'
+            }}
           </button>
         </div>
       </form>
@@ -212,6 +238,29 @@ const register = async () => {
           Sign in
         </router-link>
       </div>
+
+      <!-- Divider -->
+      <div class="my-6 flex items-center gap-3">
+        <div class="h-px flex-1 bg-gray-300 dark:bg-white/10"></div>
+        <span class="text-xs text-gray-400">or</span>
+        <div class="h-px flex-1 bg-gray-300 dark:bg-white/10"></div>
+      </div>
+
+      <!-- Google Button -->
+      <button
+        type="button"
+        @click="loginWithGoogle"
+        class="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 text-sm font-semibold text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 transition"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M21.35 11.1H12v2.9h5.35c-.23 1.45-1.74 4.26-5.35 4.26-3.22 0-5.85-2.67-5.85-5.96s2.63-5.96 5.85-5.96c1.83 0 3.06.78 3.76 1.46l2.57-2.48C17.64 4.6 15.04 3.5 12 3.5 6.75 3.5 2.5 7.76 2.5 13s4.25 9.5 9.5 9.5c5.48 0 9.1-3.85 9.1-9.28 0-.62-.07-1.1-.15-1.62z"
+          />
+        </svg>
+
+        Regsiter with Google
+      </button>
     </div>
   </div>
 </template>
