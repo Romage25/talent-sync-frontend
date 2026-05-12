@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import type { RegisterForm } from '@/types/auth'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 const auth = useAuthStore()
 const route = useRoute()
@@ -56,7 +57,7 @@ const loginWithGoogle = () => {
   googleLoading.value = true
 
   setTimeout(() => {
-    window.location.href = 'http://localhost:8000/auth/google/redirect?mode=register'
+    window.location.href = `${API_BASE_URL}/auth/google/redirect?mode=register`
   }, 500)
 }
 
