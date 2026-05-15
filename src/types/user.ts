@@ -5,4 +5,6 @@ export interface User {
   address: string;
   phone_no: string;
   email: string;
+
+  role?: '' | 'recruiter' | 'applicant' | 'admin';
 }

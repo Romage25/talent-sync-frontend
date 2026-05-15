@@ -75,12 +75,16 @@ export const useAuthStore = defineStore('auth', {
         const res = await api.get('/user')
 
         this.user = res.data.user
-      } catch (err) {
-        this.user = null
-        this.token = null
-        localStorage.removeItem('token')
+      } catch (err: any) {
+        const status = err?.response?.status
 
-        console.error(err);
+        if (status === 401) {
+          this.user = null
+          this.token = null
+          localStorage.removeItem('token')
+        }
+
+        console.error(err)
       }
     },
   },

@@ -11,7 +11,6 @@ import { useAuthStore } from './stores/auth'
 const app = createApp(App)
 
 app.use(createPinia())
-app.use(router)
 
 async function init() {
   const auth = useAuthStore()
@@ -22,6 +21,8 @@ async function init() {
     auth.token = token
     await auth.fetchUser()
   }
+
+  app.use(router)
 
   app.mount('#app') // Mount AFTER fetch
 }
