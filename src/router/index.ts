@@ -55,9 +55,13 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const token = localStorage.getItem('token')
   const auth = useAuthStore()
+
+  if (token && !auth.user) {
+    await auth.fetchUser()
+  }
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
