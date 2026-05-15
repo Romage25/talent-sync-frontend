@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import api from '@/service/api'
 import type { RegisterForm } from '@/types/auth'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const auth = useAuthStore()
 
 const loading = ref(false)
 
@@ -33,6 +35,9 @@ const completeProfile = async () => {
   try {
     await api.put('/complete-profile', form)
 
+    // refresh user from backend
+    await auth.fetchUser();
+
     router.push('/')
   } catch (error: any) {
     if (error.response?.status === 422) {
@@ -42,6 +47,20 @@ const completeProfile = async () => {
     loading.value = false
   }
 }
+
+watch(
+  () => auth.user,
+  (user) => {
+    if (!user) return
+
+    form.first_name = user.first_name || ''
+    form.last_name = user.last_name || ''
+    form.address = user.address || ''
+    form.phone_no = user.phone_no || ''
+    form.role = user.role || ''
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -150,7 +169,7 @@ const completeProfile = async () => {
             type="submit"
             class="w-full rounded-md bg-indigo-600 py-2 text-white font-semibold hover:bg-indigo-500 transition disabled:opacity-50"
           >
-            {{ loading ? 'Saving...' : 'Complete Profile' }}
+            {{ loading ? 'Saving...' : 'Update Profile' }}
           </button>
         </div>
       </form>
