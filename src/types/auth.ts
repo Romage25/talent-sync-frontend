@@ -8,7 +8,7 @@ export interface RegisterForm {
   last_name: string;
   address: string;
   phone_no: string;
-  role: '' | 'recruiter' | 'applicant';
+  role: '' | 'recruiter' | 'applicant' | 'admin';
   email: string;
   password: string;
   password_confirmation: string;

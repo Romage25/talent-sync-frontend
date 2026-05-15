@@ -6,5 +6,5 @@ export interface User {
   phone_no: string;
   email: string;
 
-  role?: string;
+  role?: '' | 'recruiter' | 'applicant' | 'admin';
 }
