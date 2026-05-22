@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import JobCreateModal from '@/views/JobCreateModal.vue'
 
 const router = useRouter()
 
@@ -33,6 +35,22 @@ const dummyJobs = [
   },
 ]
 
+const showCreateModal = ref(false)
+
+const openModal = () => {
+  showCreateModal.value = true
+}
+
+const closeModal = () => {
+  showCreateModal.value = false
+}
+
+const handleSubmit = (data: any) => {
+  console.log('New Job:', data)
+
+  // later: axios.post("/api/jobs", data)
+}
+
 const goToDetails = (id: number) => {
   router.push(`/jobs/${id}`)
 }
@@ -47,6 +65,7 @@ const goToDetails = (id: number) => {
     </div>
 
     <button
+      @click="openModal"
       class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm"
     >
       Create Job
@@ -86,4 +105,6 @@ const goToDetails = (id: number) => {
       </div>
     </div>
   </div>
+
+  <JobCreateModal :show="showCreateModal" @close="closeModal" @submit="handleSubmit" />
 </template>
