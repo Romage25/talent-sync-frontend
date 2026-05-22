@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import JobCreateModal from '@/views/JobCreateModal.vue'
+import JobCreateModal from '@/views/components/jobs/JobCreateModal.vue'
 
 const router = useRouter()
 

@@ -20,11 +20,11 @@ const router = createRouter({
         },
         {
           path: 'jobs',
-          component: () => import('@/views/JobView.vue'),
+          component: () => import('@/views/jobs/JobView.vue'),
         },
         {
           path: "/jobs/:id",
-          component: () => import('@/views/JobShow.vue'),
+          component: () => import('@/views/jobs/JobShow.vue'),
           props: true,
         },
         {
