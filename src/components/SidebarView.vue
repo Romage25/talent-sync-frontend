@@ -44,6 +44,10 @@ const menus = ref<MenuItem[]>([
   //   ],
   // },
   {
+    title: 'Jobs',
+    path: '/jobs',
+  },
+  {
     title: 'About',
     path: '/about',
   },
